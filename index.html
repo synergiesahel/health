@@ -2011,12 +2011,355 @@
     .kpi-grid { grid-template-columns: repeat(2, 1fr); }
     .g-2-1, .g-1-2 { grid-template-columns: 1fr; }
   }
+  /* ============================================================
+     RESPONSIVE — Mobile-first hamburger drawer + stacked layouts
+  ============================================================ */
+
+  /* Hamburger button — hidden by default, shown on mobile */
+  .sb-hamburger {
+    display: none;
+    width: 38px; height: 38px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    cursor: pointer;
+    padding: 10px 9px;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 8px;
+    transition: background 0.15s ease;
+    box-sizing: border-box;
+  }
+  .sb-hamburger:hover { background: rgba(255,255,255,0.22); }
+  .sb-hamburger span {
+    display: block;
+    height: 2.5px;
+    width: 100%;
+    background: white;
+    border-radius: 2px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  body.sb-open .sb-hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  body.sb-open .sb-hamburger span:nth-child(2) { opacity: 0; }
+  body.sb-open .sb-hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .sb-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.55);
+    z-index: 90;
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+  }
+  body.sb-open .sb-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* ====== TABLET (≤ 1024px) ====== */
+  @media (max-width: 1024px) {
+    .h-context { display: none; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .exec-grid { grid-template-columns: 1fr; }
+    .pda-prov-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ====== MOBILE / SMALL TABLET (≤ 900px) ====== */
+  @media (max-width: 900px) {
+    .sb-hamburger { display: flex; }
+    .sb-backdrop { display: block; }
+
+    /* Sidebar becomes off-canvas drawer */
+    .layout { display: block; }
+    .sb {
+      position: fixed;
+      top: 0; left: 0;
+      width: 280px;
+      max-width: 85vw;
+      height: 100vh;
+      transform: translateX(-100%);
+      transition: transform 0.28s ease;
+      z-index: 95;
+      box-shadow: 4px 0 20px rgba(0,0,0,0.25);
+      overflow-y: auto;
+    }
+    body.sb-open .sb { transform: translateX(0); }
+    [dir="rtl"] .sb {
+      left: auto; right: 0;
+      transform: translateX(100%);
+      box-shadow: -4px 0 20px rgba(0,0,0,0.25);
+    }
+    [dir="rtl"] body.sb-open .sb { transform: translateX(0); }
+
+    .main {
+      width: 100%;
+      margin-left: 0;
+    }
+
+    /* Header compresses */
+    .header {
+      padding: 10px 12px;
+      gap: 8px;
+    }
+    .h-logo { width: 32px; height: 32px; font-size: 11px; }
+    .h-title { font-size: 14px; }
+    .h-sub { font-size: 9.5px; }
+    .h-right { gap: 5px; }
+    .h-pill { padding: 4px 8px; font-size: 10.5px; }
+    .h-pill .ico { font-size: 11px; }
+
+    /* Topbar wraps and stacks blocks */
+    .topbar {
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+    }
+    .breadcrumb {
+      width: 100%;
+      font-size: 10.5px;
+      order: 1;
+    }
+    .breadcrumb .crumb-current { font-size: 11px; }
+    /* Hide non-current crumbs on mobile, keep only last */
+    .breadcrumb span:not(.crumb-current):not(.sep) { display: none; }
+    .breadcrumb .sep { display: none; }
+    .breadcrumb .crumb-current { display: inline; }
+    /* Show inline ellipsis before current */
+    .breadcrumb::before {
+      content: '…';
+      color: var(--muted);
+      margin-right: 6px;
+      font-size: 11px;
+    }
+    .breadcrumb:has(span:not(.crumb-current))::before { content: '…'; }
+
+    .time-block, .scope-block, .lang-block {
+      flex-shrink: 1;
+    }
+    .time-label { display: none; }
+    .period-pills { padding: 2px; }
+    .pp { padding: 4px 8px; font-size: 10.5px; }
+    .period-sel { font-size: 11.5px; padding: 4px 6px; max-width: 130px; }
+    .scope-sel { max-width: 180px; }
+    .lang-pills { padding: 2px; }
+    .lang-btn { padding: 4px 7px; font-size: 10.5px; }
+
+    /* Page header */
+    .ph { padding: 14px 16px; }
+    .ph-title {
+      font-size: 19px !important;
+      line-height: 1.25;
+    }
+    .ph-sub { font-size: 11.5px; line-height: 1.4; }
+    .ph-tag { font-size: 10px; }
+
+    /* Content padding */
+    .content { padding: 14px; }
+    .content > * + * { margin-top: 12px !important; }
+
+    /* KPI grid → single column on phones */
+    .kpi-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .kpi { padding: 14px; }
+    .kpi-value { font-size: 24px; }
+    .kpi-label { font-size: 10.5px; }
+
+    /* 2-column grid → 1-column */
+    .grid-2 { grid-template-columns: 1fr !important; }
+
+    /* Cards */
+    .card { padding: 14px; }
+    .card-title { font-size: 13px; }
+    .card-subtitle { font-size: 11px; }
+
+    /* AI box / Santex */
+    .ai-box { padding: 14px; }
+    .ai-title { font-size: 14px; }
+    .ai-text { font-size: 12.5px; line-height: 1.55; }
+
+    /* PDA tabs scroll horizontally */
+    .pda-tabs {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+    .pda-tab {
+      flex-shrink: 0;
+      white-space: nowrap;
+      font-size: 11px;
+      padding: 8px 11px;
+    }
+
+    /* PDA province cards stack 1-column */
+    .pda-prov-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .pda-prov-card { padding: 14px; }
+
+    /* Filter bar wraps */
+    .fb-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .fb-badge { width: 100%; justify-content: flex-start; }
+    .fb-text { font-size: 11.5px; line-height: 1.5; }
+
+    /* Ministerial executive tabs */
+    .exec-tabs {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 12px 14px 0;
+    }
+    .exec-tab { padding: 9px 12px; }
+    .et-num { font-size: 18px; min-width: 28px; }
+    .et-label { font-size: 12.5px; }
+    .et-meta { font-size: 9.5px; }
+
+    /* KPI exec stack */
+    .kpe-head {
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .kpe-num { font-size: 16px; min-width: 28px; }
+    .kpe-label { font-size: 13px; }
+    .kpe-cat { font-size: 9.5px; }
+    .kpe-status { font-size: 9.5px; padding: 2px 6px; }
+    .kpe-body {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .kpe-num-big { font-size: 36px; }
+    .kpe-unit { font-size: 15px; }
+    .kpe-spark-block {
+      width: 100%;
+      text-align: left;
+    }
+    .mini-spark { height: 36px; }
+    .kpe-action { font-size: 11px; padding: 8px 10px; }
+
+    /* Footer */
+    .exec-footer { padding: 14px; }
+    .exec-footer-row {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .ef-label { font-size: 9px; }
+    .ef-val { font-size: 11.5px; }
+
+    /* Map — keep grid but shrink */
+    .map-wrap { padding: 50px 12px 14px; }
+    .map-grid {
+      gap: 4px;
+      max-width: 100%;
+      aspect-ratio: 5/5.5;
+    }
+    .mc-name { font-size: 9.5px; }
+    .mc-val { font-size: 12px; }
+    .mc-pda { font-size: 7.5px; margin-top: 2px; }
+    .map-info {
+      position: static;
+      margin-bottom: 10px;
+      min-width: 0;
+      width: 100%;
+    }
+    .map-legend {
+      position: static;
+      margin-top: 10px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .map-mode-toggle {
+      position: absolute;
+      top: 8px; right: 8px;
+    }
+    .mm-btn { padding: 4px 9px; font-size: 10px; }
+
+    /* Province banner */
+    .prov-banner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 12px 14px;
+    }
+    .prov-banner-clear { font-size: 11px; padding: 6px 10px; }
+
+    /* Sidebar prog/subprog touch-friendly */
+    .prog-head { padding: 11px 12px; }
+    .prog-label { font-size: 13px; }
+    .subprog { padding: 10px 14px 10px 36px; }
+    .sp-label { font-size: 12px; }
+
+    /* Tables that don't fit: horizontal scroll */
+    .scroll-x {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* SI cards */
+    .si-grid { grid-template-columns: 1fr !important; }
+
+    /* Bar rows */
+    .bar-row {
+      grid-template-columns: 1fr !important;
+      gap: 4px;
+    }
+    .bar-row .br-label {
+      font-size: 11px;
+      white-space: normal;
+    }
+
+    /* Disable hover scale on touch (no extra space + no scale bug on tap) */
+    .kpi:hover, .card:hover, .pda-prov-card:hover, .kpi-exec:hover, .map-cell:hover {
+      transform: none;
+    }
+  }
+
+  /* ====== PHONE (≤ 480px) ====== */
+  @media (max-width: 480px) {
+    .h-title { font-size: 13px; }
+    .h-sub { display: none; }
+    /* Hide right pills on small phone, keep them readable inside the drawer/topbar */
+    .h-right { display: none; }
+    .h-context { display: none; }
+
+    .ph-title { font-size: 17px !important; }
+    .kpi-value { font-size: 22px; }
+    .kpe-num-big { font-size: 32px; }
+
+    /* Hide period mode pills, keep only dropdown */
+    .period-pills { display: none; }
+    .period-sel { max-width: 110px; font-size: 11px; }
+    .scope-sel { max-width: 150px; font-size: 11px; }
+
+    /* Map grid even tighter */
+    .map-wrap { padding: 46px 8px 12px; }
+    .map-grid { gap: 3px; }
+    .mc-name { font-size: 8.5px; }
+    .mc-val { font-size: 10.5px; }
+    .mc-pda { font-size: 6.5px; letter-spacing: 0.4px; }
+
+    /* Smaller lang switcher on phone — initials only */
+    .lang-btn { padding: 4px 6px; font-size: 10px; min-width: 28px; }
+  }
 </style>
 </head>
 <body>
 
 <!-- ============================ HEADER ============================ -->
 <header class="header">
+  <button class="sb-hamburger" onclick="toggleSidebar()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
   <div class="header-left">
     <div class="h-logo">SR</div>
     <div>
@@ -2036,6 +2379,8 @@
 <div class="layout">
 
   <!-- =========================== SIDEBAR =========================== -->
+  <div class="sb-backdrop" onclick="toggleSidebar()"></div>
+
   <aside class="sb">
     <div class="sb-search">
       <div class="sb-search-wrap">
@@ -3144,6 +3489,7 @@ function selectSub(progId, subId) {
     el.classList.toggle("active", el.dataset.sub === subId);
   });
   renderMain();
+  closeSidebarOnMobile();
 }
 
 function setScope(scope) {
@@ -3361,6 +3707,14 @@ function setProvinceFilter(provId) {
 function setMapMode(mode) {
   state.mapMode = mode;
   renderMain();
+}
+
+function toggleSidebar() {
+  document.body.classList.toggle("sb-open");
+}
+
+function closeSidebarOnMobile() {
+  if (window.innerWidth <= 900) document.body.classList.remove("sb-open");
 }
 
 function setMinSection(s) {
